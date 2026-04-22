@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
     "@heatflow/integrations-heizlast",
   ],
   /** React-PDF needs `canvas` shimmed; mark Node-only packages as external. */
-  serverExternalPackages: ["@react-pdf/renderer", "nodemailer", "argon2"],
+  serverExternalPackages: ["@react-pdf/renderer", "nodemailer", "@node-rs/argon2"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "lkngyjkrhgtxnebpepie.supabase.co" },

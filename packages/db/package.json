@@ -26,8 +26,7 @@
     "@heatflow/utils": "workspace:*",
     "drizzle-orm": "0.36.4",
     "postgres": "3.4.5",
-    "ulid": "2.3.0",
-    "argon2": "0.41.1"
+    "ulid": "2.3.0"
   },
   "devDependencies": {
     "drizzle-kit": "0.28.1",
