@@ -2,17 +2,18 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema/index";
 
+type DrizzleDb = ReturnType<typeof drizzle<typeof schema>>;
+
 declare global {
   // eslint-disable-next-line no-var
-  var __heatflowDbClient: ReturnType<typeof drizzle<typeof schema>> | undefined;
+  var __heatflowDbClient: DrizzleDb | undefined;
   // eslint-disable-next-line no-var
   var __heatflowSql: ReturnType<typeof postgres> | undefined;
 }
 
-function buildClient() {
+function buildClient(): DrizzleDb {
   const url = process.env.DATABASE_URL_POOLED ?? process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL not set");
-  // For Supabase pooler we want prepare:false (transaction mode)
   const isPooler = url.includes("pooler.supabase.com");
   const sql = postgres(url, {
     prepare: !isPooler,
@@ -23,10 +24,24 @@ function buildClient() {
   return drizzle(sql, { schema, casing: "snake_case" });
 }
 
-/** Singleton — survives Next.js HMR. */
-export const db = globalThis.__heatflowDbClient ?? (globalThis.__heatflowDbClient = buildClient());
+function getClient(): DrizzleDb {
+  return globalThis.__heatflowDbClient ?? (globalThis.__heatflowDbClient = buildClient());
+}
 
-export type Db = typeof db;
+/**
+ * Lazy singleton — the connection is only opened on first property access, never at import
+ * time. This lets `next build` prerender pages that don't hit the DB without needing
+ * DATABASE_URL at build time.
+ */
+export const db = new Proxy({} as DrizzleDb, {
+  get(_target, prop, receiver) {
+    const client = getClient();
+    const value = Reflect.get(client, prop, receiver);
+    return typeof value === "function" ? value.bind(client) : value;
+  },
+});
+
+export type Db = DrizzleDb;
 
 export { schema };
 
