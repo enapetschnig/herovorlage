@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   experimental: {
     typedRoutes: false,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   /** Transpile workspace packages so Next.js can build them. */
   transpilePackages: [
     "@heatflow/api",

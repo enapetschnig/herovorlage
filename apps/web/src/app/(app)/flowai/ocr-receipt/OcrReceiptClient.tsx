@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { trpc } from "@/lib/trpc-client";
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from "@heatflow/ui";
 import { toast } from "sonner";
-import { FileText, Loader2, ScanText, Upload, X } from "lucide-react";
+import { CheckCircle2, FileText, Loader2, ScanText, Upload, X } from "lucide-react";
 import { formatDate, formatMoney } from "@heatflow/utils";
 
 type Media = "image/jpeg" | "image/png" | "image/webp" | "application/pdf";
