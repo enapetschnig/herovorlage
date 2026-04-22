@@ -1,5 +1,8 @@
+import { Suspense } from "react";
 import { LoginForm } from "./LoginForm";
 import { Flame } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   return (
@@ -37,7 +40,9 @@ export default function LoginPage() {
             Willkommen zurück. Melde dich mit deinem Konto an.
           </p>
           <div className="mt-8">
-            <LoginForm />
+            <Suspense fallback={<div className="h-10" />}>
+              <LoginForm />
+            </Suspense>
           </div>
           <div className="mt-8 text-xs text-muted-fg p-3 rounded-md border border-dashed border-border bg-muted/40">
             <strong className="text-fg">Demo-Login:</strong>{" "}
