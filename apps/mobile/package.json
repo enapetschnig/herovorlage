@@ -1,0 +1,29 @@
+{
+  "name": "@heatflow/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Capacitor wrapper for HeatFlow — wraps the Next.js app as native iOS/Android app.",
+  "scripts": {
+    "init:android": "cap add android",
+    "init:ios": "cap add ios",
+    "sync": "cap sync",
+    "open:ios": "cap open ios",
+    "open:android": "cap open android",
+    "run:ios": "cap run ios --livereload --external --port 3000",
+    "run:android": "cap run android --livereload --external --port 3000",
+    "build:web": "echo 'Mobile shell points at the Next.js dev server (livereload) or the deployed URL — no separate build needed.'"
+  },
+  "dependencies": {
+    "@capacitor/cli": "6.2.0",
+    "@capacitor/core": "6.2.0",
+    "@capacitor/ios": "6.2.0",
+    "@capacitor/android": "6.2.0",
+    "@capacitor/camera": "6.1.2",
+    "@capacitor/filesystem": "6.0.1",
+    "@capacitor/preferences": "6.0.3",
+    "@capacitor/status-bar": "6.0.2",
+    "@capacitor/keyboard": "6.0.3",
+    "@capacitor/splash-screen": "6.0.3"
+  }
+}

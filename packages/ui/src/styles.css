@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: hsl(0 0% 100%);
+  --color-fg: hsl(222 47% 11%);
+  --color-muted: hsl(220 14% 96%);
+  --color-muted-fg: hsl(220 9% 46%);
+  --color-border: hsl(220 13% 91%);
+  --color-input: hsl(220 13% 91%);
+  --color-ring: hsl(217 91% 45%);
+
+  --color-primary: hsl(217 91% 45%);
+  --color-primary-fg: hsl(0 0% 100%);
+  --color-accent: hsl(33 100% 55%);
+  --color-accent-fg: hsl(20 14% 4%);
+
+  --color-card: hsl(0 0% 100%);
+  --color-card-fg: hsl(222 47% 11%);
+
+  --color-success: hsl(142 76% 36%);
+  --color-warning: hsl(38 92% 50%);
+  --color-danger:  hsl(0 84% 55%);
+
+  --radius-sm: 4px;
+  --radius:    8px;
+  --radius-lg: 12px;
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", "Fira Code", monospace;
+}
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+  html.dark {
+    --color-bg: hsl(222 47% 7%);
+    --color-fg: hsl(210 40% 98%);
+    --color-muted: hsl(217 33% 14%);
+    --color-muted-fg: hsl(215 20% 65%);
+    --color-border: hsl(217 33% 18%);
+    --color-input: hsl(217 33% 18%);
+    --color-card: hsl(222 47% 9%);
+    --color-card-fg: hsl(210 40% 98%);
+  }
+
+  html, body {
+    @apply bg-bg text-fg antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01", "ss03";
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-bg;
+  }
+
+  /* Scrollbars */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-muted-fg); }
+}
