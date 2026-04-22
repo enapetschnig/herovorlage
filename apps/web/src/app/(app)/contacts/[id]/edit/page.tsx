@@ -12,7 +12,7 @@ export default async function EditContactPage({ params }: { params: Promise<{ id
   try { c = await trpc.contacts.byId({ id }); } catch { notFound(); }
 
   const displayName =
-    c.companyName ?? `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim() || "Kontakt";
+    (c.companyName ?? `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim()) || "Kontakt";
 
   return (
     <>

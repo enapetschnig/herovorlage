@@ -74,7 +74,7 @@ export function DatanormImporter() {
                   <option value="">— nicht zuordnen —</option>
                   {suppliers.data?.items.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {s.companyName ?? `${s.firstName ?? ""} ${s.lastName ?? ""}`.trim() || s.customerNumber || s.id}
+                      {(s.companyName ?? `${s.firstName ?? ""} ${s.lastName ?? ""}`.trim()) || s.customerNumber || s.id}
                     </option>
                   ))}
                 </select>

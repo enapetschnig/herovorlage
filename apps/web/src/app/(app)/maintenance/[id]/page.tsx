@@ -25,7 +25,7 @@ export default async function MaintenanceContractPage({ params }: { params: Prom
   try { contract = await trpc.maintenance.contractById({ id }); } catch { notFound(); }
 
   const contactName =
-    contract.contact?.companyName ?? `${contract.contact?.firstName ?? ""} ${contract.contact?.lastName ?? ""}`.trim() || "—";
+    (contract.contact?.companyName ?? `${contract.contact?.firstName ?? ""} ${contract.contact?.lastName ?? ""}`.trim()) || "—";
 
   const nextVisit = contract.visits.find((v) => !v.completedAt);
 

@@ -19,7 +19,7 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
   }
 
   const displayName =
-    contact.companyName ?? `${contact.firstName ?? ""} ${contact.lastName ?? ""}`.trim() || "(unbenannt)";
+    (contact.companyName ?? `${contact.firstName ?? ""} ${contact.lastName ?? ""}`.trim()) || "(unbenannt)";
 
   const typeLabel: Record<string, string> = {
     customer: "Kunde", supplier: "Lieferant", partner: "Partner", other: "Sonstige",

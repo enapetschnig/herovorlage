@@ -84,7 +84,7 @@ export default async function ContactsPage({
               header: "Name",
               cell: (c) => (
                 <Link href={`/contacts/${c.id}`} className="font-medium hover:underline">
-                  {c.companyName ?? `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim() || "—"}
+                  {(c.companyName ?? `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim()) || "—"}
                 </Link>
               ),
             },

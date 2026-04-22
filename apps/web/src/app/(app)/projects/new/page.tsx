@@ -16,7 +16,7 @@ export default async function NewProjectPage({ searchParams }: { searchParams: P
         <ProjectForm
           contacts={contacts.items.map((c) => ({
             id: c.id,
-            label: c.companyName ?? `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim() || c.customerNumber || c.id,
+            label: (c.companyName ?? `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim()) || c.customerNumber || c.id,
           }))}
           members={members}
           presetContactId={sp.contactId}

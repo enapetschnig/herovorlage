@@ -21,7 +21,7 @@ export default async function NewDocumentPage({
         <DocumentForm
           contacts={contactsData.items.map((c) => ({
             id: c.id,
-            label: c.companyName ?? `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim() || c.customerNumber || c.id,
+            label: (c.companyName ?? `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim()) || c.customerNumber || c.id,
           }))}
           projects={projectsData.items.map((p) => ({
             id: p.id,

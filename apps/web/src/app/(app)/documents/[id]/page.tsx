@@ -26,7 +26,7 @@ export default async function DocumentDetailPage({ params }: { params: Promise<{
   const tenant = await trpc.tenant.current();
 
   const contactName =
-    doc.contact?.companyName ?? `${doc.contact?.firstName ?? ""} ${doc.contact?.lastName ?? ""}`.trim() || "—";
+    (doc.contact?.companyName ?? `${doc.contact?.firstName ?? ""} ${doc.contact?.lastName ?? ""}`.trim()) || "—";
 
   // VAT breakdown
   const vatBreakdown = new Map<number, { net: number; vat: number }>();

@@ -26,7 +26,7 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
           projectId={p.id}
           contacts={contactsData.items.map((c) => ({
             id: c.id,
-            label: c.companyName ?? `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim() || c.customerNumber || c.id,
+            label: (c.companyName ?? `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim()) || c.customerNumber || c.id,
             sub: c.customerNumber ?? undefined,
           }))}
           members={members}

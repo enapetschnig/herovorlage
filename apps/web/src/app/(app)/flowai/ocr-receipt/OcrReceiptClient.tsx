@@ -273,7 +273,7 @@ function ReceiptSaveCard({ result }: { result: NonNullable<ReturnType<typeof trp
               <option value="">— wählen —</option>
               {suppliers.data?.items.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.companyName ?? `${s.firstName ?? ""} ${s.lastName ?? ""}`.trim() || s.customerNumber}
+                  {(s.companyName ?? `${s.firstName ?? ""} ${s.lastName ?? ""}`.trim()) || s.customerNumber}
                 </option>
               ))}
             </select>
