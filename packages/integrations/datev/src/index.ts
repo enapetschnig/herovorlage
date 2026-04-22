@@ -148,7 +148,7 @@ export type HeatflowDocumentForDatev = {
 export function invoiceToBookings(doc: HeatflowDocumentForDatev, opts: { defaultDebitor?: string; sr: "SKR03" | "SKR04" } = { sr: "SKR03" }): DatevBooking[] {
   const debitor = doc.contact.debitorAccount ?? opts.defaultDebitor ?? "10000";
   const bookingDate = (doc.documentDate ?? "").replace(/-/g, "");
-  const contactName = doc.contact.companyName ?? `${doc.contact.firstName ?? ""} ${doc.contact.lastName ?? ""}`.trim() || "Kunde";
+  const contactName = (doc.contact.companyName ?? `${doc.contact.firstName ?? ""} ${doc.contact.lastName ?? ""}`.trim()) || "Kunde";
   const text = `RE ${doc.number} ${contactName}`.slice(0, 60);
 
   // VAT-rate buckets

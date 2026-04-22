@@ -65,7 +65,7 @@ export default async function FundingPage() {
             <DataTable
               rows={apps}
               rowKey={(a) => a.id}
-              empty={<EmptyState icon={<FileSpreadsheet className="size-5" />} title="Noch keine Anträge" description="Erstelle Anträge direkt aus dem Projekt-Detail → Tab „Förderung"." />}
+              empty={<EmptyState icon={<FileSpreadsheet className="size-5" />} title="Noch keine Anträge" description={'Erstelle Anträge direkt aus dem Projekt-Detail → Tab „Förderung".'} />}
               columns={[
                 { id: "project", header: "Projekt", cell: (a) => (
                   <Link href={`/projects/${a.projectId}`} className="font-medium hover:underline">

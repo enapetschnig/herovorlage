@@ -109,7 +109,7 @@ export function renderXRechnungXml(input: CiiInput): string {
 
   const buyerRef = leitwegId ?? contact.customerNumber ?? document.number;
   const sellerName = tenant.legalName ?? tenant.name;
-  const buyerName = contact.companyName ?? `${contact.firstName ?? ""} ${contact.lastName ?? ""}`.trim() || "Unbekannt";
+  const buyerName = (contact.companyName ?? `${contact.firstName ?? ""} ${contact.lastName ?? ""}`.trim()) || "Unbekannt";
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rsm:CrossIndustryInvoice

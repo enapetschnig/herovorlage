@@ -64,7 +64,7 @@ type Props = {
 
 export function DocumentPdf({ document, tenant, contact }: Props) {
   const recipientName =
-    contact.companyName ?? `${contact.firstName ?? ""} ${contact.lastName ?? ""}`.trim() || "—";
+    (contact.companyName ?? `${contact.firstName ?? ""} ${contact.lastName ?? ""}`.trim()) || "—";
   const senderLine = [tenant.name, tenant.addressStreet, `${tenant.addressZip ?? ""} ${tenant.addressCity ?? ""}`.trim()]
     .filter(Boolean).join(" · ");
 
