@@ -8,12 +8,13 @@ import { z } from "zod";
 
 export const projectsRouter = router({
   list: protectedProcedure.input(projectListInput).query(async ({ ctx, input }) => {
-    const { page, pageSize, search, status, contactId, sortBy, sortDir } = input;
+    const { page, pageSize, search, status, contactId, pipelineStage, sortBy, sortDir } = input;
     const offset = (page - 1) * pageSize;
     const p = schema.projects;
     const filters = [eq(p.tenantId, ctx.tenantId), isNull(p.deletedAt)];
     if (status) filters.push(eq(p.status, status));
     if (contactId) filters.push(eq(p.contactId, contactId));
+    if (pipelineStage) filters.push(eq(p.pipelineStage, pipelineStage));
     if (search) {
       const s = `%${search}%`;
       const or_ = or(ilike(p.title, s), ilike(p.number, s));

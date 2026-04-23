@@ -29,6 +29,7 @@ export const projectListInput = listInput({
   contactId: z.string().optional(),
   responsibleUserId: z.string().optional(),
   trade: z.string().optional(),
+  pipelineStage: z.string().optional(),
 });
 export type ProjectListInput = z.infer<typeof projectListInput>;
 

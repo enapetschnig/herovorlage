@@ -69,6 +69,37 @@ export const tenantRouter = router({
       : DEFAULT_PIPELINE_STAGES;
   }),
 
+  /** Pipeline stages + count of active (non-finalized) projects per stage — for sidebar. */
+  pipelineStagesWithCounts: protectedProcedure.query(async ({ ctx }) => {
+    const [t] = await ctx.db
+      .select({ settings: schema.tenants.settings })
+      .from(schema.tenants)
+      .where(eq(schema.tenants.id, ctx.tenantId))
+      .limit(1);
+    const raw = (t?.settings as Record<string, unknown> | null)?.pipelineStages;
+    const stages: string[] =
+      Array.isArray(raw) && raw.every((s) => typeof s === "string")
+        ? (raw as string[])
+        : DEFAULT_PIPELINE_STAGES;
+
+    const rows = await ctx.db
+      .select({
+        stage: schema.projects.pipelineStage,
+        cnt: sql<string>`count(*)`,
+      })
+      .from(schema.projects)
+      .where(and(eq(schema.projects.tenantId, ctx.tenantId), isNull(schema.projects.deletedAt)))
+      .groupBy(schema.projects.pipelineStage);
+
+    const counts = new Map<string | null, number>();
+    for (const r of rows) counts.set(r.stage, Number(r.cnt ?? 0));
+
+    return {
+      stages: stages.map((name) => ({ name, count: counts.get(name) ?? 0 })),
+      unassigned: counts.get(null) ?? 0,
+    };
+  }),
+
   /** Updates the configurable project pipeline stages. Admin-only for safety. */
   updatePipelineStages: protectedProcedure
     .input(z.object({ stages: z.array(z.string().trim().min(1).max(60)).min(1).max(30) }))

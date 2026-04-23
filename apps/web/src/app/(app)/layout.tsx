@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@heatflow/auth";
+import { getTrpcCaller } from "@/server/trpc";
 import { Sidebar } from "./_components/Sidebar";
 import { TopBar } from "./_components/TopBar";
 import { CommandPaletteHost } from "./_components/CommandPaletteHost";
@@ -14,6 +15,18 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     await signOut({ redirectTo: "/login" });
   }
 
+  // Pipeline stages + per-stage project counts for sidebar
+  let pipelineStages: { name: string; count: number }[] = [];
+  let unassignedCount = 0;
+  try {
+    const trpc = await getTrpcCaller();
+    const res = await trpc.tenant.pipelineStagesWithCounts();
+    pipelineStages = res.stages;
+    unassignedCount = res.unassigned;
+  } catch {
+    // fail open — sidebar still renders without the pipeline block
+  }
+
   return (
     <div className="grid grid-cols-[248px_1fr] grid-rows-[auto_1fr] min-h-screen bg-gradient-surface">
       <Sidebar
@@ -23,6 +36,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           role: session.user.role,
         }}
         signOut={handleSignOut}
+        pipelineStages={pipelineStages}
+        unassignedCount={unassignedCount}
       />
       <div className="col-start-2 row-start-1 row-span-2 flex flex-col min-w-0">
         <TopBar />
