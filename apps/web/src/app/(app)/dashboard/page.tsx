@@ -7,38 +7,8 @@ import { Briefcase, CheckSquare, FileWarning, Users } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  let tenant: Awaited<ReturnType<Awaited<ReturnType<typeof getTrpcCaller>>["tenant"]["current"]>> | null = null;
-  let data: Awaited<ReturnType<Awaited<ReturnType<typeof getTrpcCaller>>["dashboard"]["overview"]>> | null = null;
-  let errorInfo: { message: string; stack: string; name: string } | null = null;
-
-  try {
-    const trpc = await getTrpcCaller();
-    [tenant, data] = await Promise.all([trpc.tenant.current(), trpc.dashboard.overview()]);
-  } catch (e) {
-    errorInfo = {
-      message: e instanceof Error ? e.message : String(e),
-      stack: e instanceof Error ? (e.stack ?? "no stack") : "not an Error",
-      name: e instanceof Error ? e.name : "UnknownError",
-    };
-  }
-
-  if (errorInfo) {
-    return (
-      <div className="p-6 max-w-3xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-4">Dashboard-Fehler (raw)</h1>
-        <div className="rounded border border-danger/30 bg-danger/5 p-4 font-mono text-xs whitespace-pre-wrap break-all">
-          <div><strong>Name:</strong> {errorInfo.name}</div>
-          <div><strong>Message:</strong> {errorInfo.message}</div>
-          <div className="mt-3"><strong>Stack:</strong></div>
-          <pre className="text-[10px] leading-tight mt-1">{errorInfo.stack}</pre>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data || !tenant) {
-    return <div className="p-6">No data, no error. Unexpected.</div>;
-  }
+  const trpc = await getTrpcCaller();
+  const [tenant, data] = await Promise.all([trpc.tenant.current(), trpc.dashboard.overview()]);
 
   return (
     <>
@@ -48,7 +18,6 @@ export default async function DashboardPage() {
       />
 
       <div className="p-6 space-y-6 max-w-7xl mx-auto">
-        {/* KPIs */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard label="Kontakte" value={data.kpis.contacts} icon={<Users className="size-5" />} />
           <KpiCard label="Aktive Projekte" value={data.kpis.activeProjects} icon={<Briefcase className="size-5" />} />

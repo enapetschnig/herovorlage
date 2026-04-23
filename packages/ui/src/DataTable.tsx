@@ -1,4 +1,3 @@
-"use client";
 import type { ReactNode } from "react";
 import { cn } from "./cn";
 
@@ -15,14 +14,12 @@ export function DataTable<T>({
   columns,
   rows,
   rowKey,
-  onRowClick,
   empty,
   className,
 }: {
   columns: DataTableColumn<T>[];
   rows: T[];
   rowKey: (row: T) => string;
-  onRowClick?: (row: T) => void;
   empty?: ReactNode;
   className?: string;
 }) {
@@ -57,11 +54,7 @@ export function DataTable<T>({
             {rows.map((row) => (
               <tr
                 key={rowKey(row)}
-                onClick={onRowClick ? () => onRowClick(row) : undefined}
-                className={cn(
-                  "border-b border-border last:border-0 hover:bg-muted/30 transition-colors",
-                  onRowClick && "cursor-pointer",
-                )}
+                className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors"
               >
                 {columns.map((c) => (
                   <td
