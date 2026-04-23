@@ -29,6 +29,7 @@ export const projectsRouter = router({
           number: p.number,
           title: p.title,
           status: p.status,
+          pipelineStage: p.pipelineStage,
           potentialValue: p.potentialValue,
           startDate: p.startDate,
           endDate: p.endDate,
@@ -205,6 +206,30 @@ export const projectsRouter = router({
     });
     return { id: input.id };
   }),
+
+  /** Move a project to a pipeline stage. Logs the transition. */
+  setPipelineStage: protectedProcedure
+    .input(z.object({ id: z.string(), stage: z.string().trim().min(1).max(60).nullable() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(schema.projects)
+        .set({ pipelineStage: input.stage, updatedAt: new Date() })
+        .where(and(eq(schema.projects.id, input.id), eq(schema.projects.tenantId, ctx.tenantId)));
+
+      await ctx.db.insert(schema.logbookEntries).values({
+        id: idFor.logbookEntry(),
+        tenantId: ctx.tenantId,
+        entityType: "project",
+        entityId: input.id,
+        kind: "system",
+        message: input.stage
+          ? `Stufe: ${input.stage}`
+          : "Stufe zurückgesetzt",
+        authorUserId: ctx.userId,
+        isSystemEvent: true,
+      });
+      return { id: input.id, stage: input.stage };
+    }),
 
   remove: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
     await ctx.db

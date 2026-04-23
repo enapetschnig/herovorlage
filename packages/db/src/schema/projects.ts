@@ -29,6 +29,7 @@ export const projects = pgTable(
     number: text("number").notNull(),
     title: text("title").notNull(),
     status: text("status").notNull().default("lead"),
+    pipelineStage: text("pipeline_stage"),
     contactId: text("contact_id")
       .notNull()
       .references(() => contacts.id),

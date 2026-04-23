@@ -4,8 +4,24 @@ import { idFor, newId } from "@heatflow/utils/ids";
 import { CORE_FEATURES, type FeatureKey } from "@heatflow/utils/constants";
 import { hashPassword } from "@heatflow/auth/password";
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
+
+const DEFAULT_PIPELINE_STAGES = [
+  "Erstgespräch",
+  "Vor-Ort-Termin",
+  "Heizlast-Berechnung",
+  "Angebot erstellt",
+  "Angebot angenommen",
+  "Förderung beantragt",
+  "Material bestellt",
+  "Montage geplant",
+  "Montage läuft",
+  "Inbetriebnahme",
+  "Abnahme + Unterschrift",
+  "Rechnung gestellt",
+  "Bezahlt",
+];
 
 const signupSchema = z.object({
   companyName: z.string().trim().min(2).max(160),
@@ -39,6 +55,39 @@ export const tenantRouter = router({
       .from(schema.tenantFeatures)
       .where(eq(schema.tenantFeatures.tenantId, ctx.tenantId));
   }),
+
+  /** Returns the tenant's configurable project pipeline stages. */
+  pipelineStages: protectedProcedure.query(async ({ ctx }) => {
+    const [t] = await ctx.db
+      .select({ settings: schema.tenants.settings })
+      .from(schema.tenants)
+      .where(eq(schema.tenants.id, ctx.tenantId))
+      .limit(1);
+    const raw = (t?.settings as Record<string, unknown> | null)?.pipelineStages;
+    return Array.isArray(raw) && raw.every((s) => typeof s === "string")
+      ? (raw as string[])
+      : DEFAULT_PIPELINE_STAGES;
+  }),
+
+  /** Updates the configurable project pipeline stages. Admin-only for safety. */
+  updatePipelineStages: protectedProcedure
+    .input(z.object({ stages: z.array(z.string().trim().min(1).max(60)).min(1).max(30) }))
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.role !== "owner" && ctx.role !== "admin") {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Nur Admins dürfen Pipeline-Stufen ändern." });
+      }
+      // Dedupe while preserving order
+      const seen = new Set<string>();
+      const stages = input.stages.filter((s) => (seen.has(s) ? false : seen.add(s)));
+      await ctx.db
+        .update(schema.tenants)
+        .set({
+          settings: sql`jsonb_set(coalesce(settings, '{}'::jsonb), '{pipelineStages}', ${JSON.stringify(stages)}::jsonb, true)`,
+          updatedAt: new Date(),
+        })
+        .where(eq(schema.tenants.id, ctx.tenantId));
+      return { stages };
+    }),
 
   members: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db

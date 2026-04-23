@@ -12,6 +12,7 @@ import { ProjectFundingTab } from "../_components/ProjectFundingTab";
 import { ProjectChatTab } from "../_components/ProjectChatTab";
 import { HeizlastCard } from "../_components/HeizlastCard";
 import { ChecklistCard } from "../../_components/ChecklistCard";
+import { PipelineStepper } from "./_components/PipelineStepper";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   } catch {
     notFound();
   }
+  const pipelineStages = await trpc.tenant.pipelineStages();
 
   const contactName = project.contact
     ? project.contact.companyName ?? `${project.contact.firstName ?? ""} ${project.contact.lastName ?? ""}`.trim()
@@ -53,6 +55,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
       </PageHeader>
+
+      <div className="px-6 pt-4 max-w-7xl mx-auto w-full">
+        <PipelineStepper
+          projectId={project.id}
+          stages={pipelineStages}
+          currentStage={(project as { pipelineStage?: string | null }).pipelineStage ?? null}
+        />
+      </div>
 
       <Tabs
         items={[

@@ -2,6 +2,7 @@ import { getTrpcCaller } from "@/server/trpc";
 import { Avatar, Badge, Card, CardContent, CardHeader, CardTitle, PageHeader } from "@heatflow/ui";
 import { CORE_FEATURES, FEATURES } from "@heatflow/utils/constants";
 import { DatevExportCard } from "./_components/DatevExportCard";
+import { PipelineStagesEditor } from "./_components/PipelineStagesEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -32,10 +33,11 @@ const FEATURE_LABELS: Record<string, string> = {
 
 export default async function SettingsPage() {
   const trpc = await getTrpcCaller();
-  const [tenant, members, features] = await Promise.all([
+  const [tenant, members, features, pipelineStages] = await Promise.all([
     trpc.tenant.current(),
     trpc.tenant.members(),
     trpc.tenant.features(),
+    trpc.tenant.pipelineStages(),
   ]);
 
   return (
@@ -91,6 +93,8 @@ export default async function SettingsPage() {
             ))}
           </CardContent>
         </Card>
+
+        <PipelineStagesEditor initialStages={pipelineStages} />
 
         <DatevExportCard />
       </div>
