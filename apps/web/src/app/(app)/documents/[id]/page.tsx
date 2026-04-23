@@ -5,6 +5,7 @@ import { Badge, Button, Card, CardContent, CardHeader, CardTitle, PageHeader, St
 import { formatDate, formatMoney } from "@heatflow/utils";
 import { Copy, FileText, Lock, Pencil } from "lucide-react";
 import { DocumentActions } from "../_components/DocumentActions";
+import { CreatedBanner } from "./_components/CreatedBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -64,6 +65,8 @@ export default async function DocumentDetailPage({ params }: { params: Promise<{
       </PageHeader>
 
       <div className="p-6 max-w-5xl mx-auto">
+        <CreatedBanner docId={doc.id} number={doc.number} />
+
         {/* Document preview, A4-ish look */}
         <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
           {/* Header: sender + recipient + meta */}

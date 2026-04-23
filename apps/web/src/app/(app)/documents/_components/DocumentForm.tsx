@@ -121,7 +121,7 @@ export function DocumentForm({
     create.mutate(values, {
       onSuccess: ({ id, number }) => {
         toast.success(`${TYPE_LABEL[values.type]} ${number} angelegt`);
-        router.push(`/documents/${id}`);
+        router.push(`/documents/${id}?created=1`);
         router.refresh();
       },
       onError: (e) => { toast.error(e.message); setPending(false); },

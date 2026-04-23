@@ -1,17 +1,19 @@
 "use client";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Avatar, cn } from "@heatflow/ui";
 import {
   LayoutDashboard, Users, Briefcase, FileText, Package, Clock, CheckSquare,
   CalendarDays, Wrench, FileSpreadsheet, Sparkles, Settings, LogOut, Flame, AlertCircle, Warehouse, ListChecks,
+  ChevronDown,
 } from "lucide-react";
 
 type NavItem = {
   href: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  group?: string;
+  group: string;
 };
 
 const NAV: NavItem[] = [
@@ -32,6 +34,10 @@ const NAV: NavItem[] = [
   { href: "/settings",    label: "Einstellungen", icon: Settings,         group: "System" },
 ];
 
+const GROUP_ORDER = ["Start", "CRM", "Belege", "Operativ", "Module", "System"] as const;
+
+const STORAGE_KEY = "heatflow:sidebar-collapsed-groups";
+
 export function Sidebar({
   user,
   signOut,
@@ -40,11 +46,35 @@ export function Sidebar({
   signOut: () => Promise<void>;
 }) {
   const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [hydrated, setHydrated] = useState(false);
+
+  // Load collapse state from localStorage after mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) setCollapsed(JSON.parse(raw));
+    } catch {
+      /* ignore */
+    }
+    setHydrated(true);
+  }, []);
+
+  function toggle(group: string) {
+    setCollapsed((prev) => {
+      const next = { ...prev, [group]: !prev[group] };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }
 
   const groups: Record<string, NavItem[]> = {};
   for (const item of NAV) {
-    const g = item.group ?? "";
-    (groups[g] ??= []).push(item);
+    (groups[item.group] ??= []).push(item);
   }
 
   return (
@@ -61,45 +91,74 @@ export function Sidebar({
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2.5 space-y-5">
-        {Object.entries(groups).map(([group, items]) => (
-          <div key={group}>
-            <div className="px-2.5 text-[10px] font-semibold text-muted-fg uppercase tracking-[0.08em] mb-1.5">
-              {group}
-            </div>
-            <ul className="space-y-0.5">
-              {items.map((item) => {
-                const Icon = item.icon;
-                const active =
-                  pathname === item.href || pathname.startsWith(item.href + "/");
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "group relative flex items-center gap-2.5 pl-2.5 pr-2 py-1.5 rounded-md text-sm font-medium transition-all",
-                        active
-                          ? "bg-primary/10 text-primary"
-                          : "text-fg/85 hover:text-fg hover:bg-muted",
-                      )}
-                    >
-                      {active && (
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-primary" />
-                      )}
-                      <Icon
+      <nav className="flex-1 overflow-y-auto py-3 px-2.5 space-y-1">
+        {GROUP_ORDER.map((group) => {
+          const items = groups[group];
+          if (!items?.length) return null;
+
+          // Auto-expand group that contains current page on first render
+          const groupActive = items.some(
+            (it) => pathname === it.href || pathname.startsWith(it.href + "/"),
+          );
+          // Only use user-controlled state after hydration so SSR matches initial client render
+          const isCollapsed = hydrated ? (collapsed[group] ?? false) && !groupActive : false;
+
+          return (
+            <div key={group} className="pb-1">
+              <button
+                type="button"
+                onClick={() => toggle(group)}
+                className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-[10px] font-semibold text-muted-fg uppercase tracking-[0.08em] hover:text-fg hover:bg-muted/50 transition-colors"
+                aria-expanded={!isCollapsed}
+              >
+                <span>{group}</span>
+                <ChevronDown
+                  className={cn(
+                    "size-3.5 transition-transform",
+                    isCollapsed && "-rotate-90",
+                  )}
+                />
+              </button>
+
+              <ul
+                className={cn(
+                  "overflow-hidden transition-all space-y-0.5",
+                  isCollapsed ? "max-h-0 opacity-0" : "max-h-[600px] opacity-100 mt-0.5",
+                )}
+              >
+                {items.map((item) => {
+                  const Icon = item.icon;
+                  const active =
+                    pathname === item.href || pathname.startsWith(item.href + "/");
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
                         className={cn(
-                          "size-4 flex-shrink-0 transition-colors",
-                          active ? "text-primary" : "text-muted-fg group-hover:text-fg",
+                          "group relative flex items-center gap-2.5 pl-2.5 pr-2 py-1.5 rounded-md text-sm font-medium transition-all",
+                          active
+                            ? "bg-primary/10 text-primary"
+                            : "text-fg/85 hover:text-fg hover:bg-muted",
                         )}
-                      />
-                      <span className="truncate">{item.label}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
+                      >
+                        {active && (
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-primary" />
+                        )}
+                        <Icon
+                          className={cn(
+                            "size-4 flex-shrink-0 transition-colors",
+                            active ? "text-primary" : "text-muted-fg group-hover:text-fg",
+                          )}
+                        />
+                        <span className="truncate">{item.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          );
+        })}
       </nav>
 
       {/* User / Sign out */}
