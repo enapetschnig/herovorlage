@@ -1,4 +1,4 @@
-export { auth as middleware } from "@heatflow/auth";
+export { auth as middleware } from "@heatflow/auth/edge";
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|public/|.*\\.(?:png|svg|jpg|jpeg|webp|ico)$).*)"],

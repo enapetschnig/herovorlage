@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./config": "./src/config.ts",
+    "./edge": "./src/edge.ts",
     "./password": "./src/password.ts"
   },
   "scripts": {
