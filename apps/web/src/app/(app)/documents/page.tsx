@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getTrpcCaller } from "@/server/trpc";
 import { Badge, Button, DataTable, EmptyState, PageHeader, StatusBadge } from "@heatflow/ui";
-import { Download, Eye, FileText, Lock, Plus, Search } from "lucide-react";
+import { Download, Eye, FileText, Info, Lock, Plus, Search } from "lucide-react";
 import { formatDate, formatMoney } from "@heatflow/utils";
 import { DOCUMENT_STATUSES, DOCUMENT_TYPES } from "@heatflow/utils/constants";
 import { cn } from "@heatflow/ui";
@@ -119,10 +119,14 @@ export default async function DocumentsPage({
               {
                 id: "number", header: "Nummer", width: "140px",
                 cell: (d) => (
-                  <Link href={`/documents/${d.id}`} className="inline-flex items-center gap-2 group">
+                  <a
+                    href={`/api/documents/${d.id}/pdf?download=1`}
+                    title="PDF herunterladen"
+                    className="inline-flex items-center gap-2 group"
+                  >
                     <code className="text-xs font-mono text-fg group-hover:text-primary tabular-nums">{d.number}</code>
                     {d.locked && <Lock className="size-3 text-muted-fg" />}
-                  </Link>
+                  </a>
                 ),
               },
               {
@@ -133,9 +137,14 @@ export default async function DocumentsPage({
                 id: "title", header: "Titel / Kunde",
                 cell: (d) => (
                   <div className="min-w-0">
-                    <Link href={`/documents/${d.id}`} className="font-medium hover:text-primary truncate block">
-                      {d.title ?? d.number}
-                    </Link>
+                    <a
+                      href={`/api/documents/${d.id}/pdf?download=1`}
+                      title="PDF herunterladen"
+                      className="font-medium hover:text-primary inline-flex items-center gap-1.5 group truncate max-w-full"
+                    >
+                      <Download className="size-3.5 text-muted-fg group-hover:text-primary flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <span className="truncate">{d.title ?? d.number}</span>
+                    </a>
                     {d.contactName && (
                       <Link href={`/contacts/${d.contactId}`} className="text-xs text-muted-fg hover:underline truncate block">
                         {d.contactName}
@@ -161,25 +170,32 @@ export default async function DocumentsPage({
                 ),
               },
               {
-                id: "actions", header: "", width: "110px", align: "right",
+                id: "actions", header: "", width: "140px", align: "right",
                 cell: (d) => (
                   <div className="flex items-center justify-end gap-0.5">
+                    <a
+                      href={`/api/documents/${d.id}/pdf?download=1`}
+                      title="PDF herunterladen"
+                      className="size-8 grid place-items-center rounded-md text-primary hover:bg-primary/10 transition-colors"
+                    >
+                      <Download className="size-4" />
+                    </a>
                     <a
                       href={`/api/documents/${d.id}/pdf`}
                       target="_blank"
                       rel="noopener"
-                      title="PDF öffnen"
+                      title="PDF in neuem Tab öffnen"
                       className="size-8 grid place-items-center rounded-md text-muted-fg hover:bg-muted hover:text-fg transition-colors"
                     >
                       <Eye className="size-4" />
                     </a>
-                    <a
-                      href={`/api/documents/${d.id}/pdf?download=1`}
-                      title="PDF herunterladen"
-                      className="size-8 grid place-items-center rounded-md text-muted-fg hover:bg-primary/10 hover:text-primary transition-colors"
+                    <Link
+                      href={`/documents/${d.id}`}
+                      title="Details öffnen"
+                      className="size-8 grid place-items-center rounded-md text-muted-fg hover:bg-muted hover:text-fg transition-colors"
                     >
-                      <Download className="size-4" />
-                    </a>
+                      <Info className="size-4" />
+                    </Link>
                   </div>
                 ),
               },
