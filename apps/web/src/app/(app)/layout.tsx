@@ -15,7 +15,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="grid grid-cols-[260px_1fr] grid-rows-[auto_1fr] min-h-screen">
+    <div className="grid grid-cols-[248px_1fr] grid-rows-[auto_1fr] min-h-screen bg-gradient-surface">
       <Sidebar
         user={{
           name: session.user.name ?? "",
@@ -26,7 +26,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       />
       <div className="col-start-2 row-start-1 row-span-2 flex flex-col min-w-0">
         <TopBar />
-        <main className="flex-1 overflow-y-auto bg-bg">{children}</main>
+        <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
       <CommandPaletteHost />
       <AssistantHost />

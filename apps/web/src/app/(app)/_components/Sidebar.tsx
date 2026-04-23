@@ -15,21 +15,21 @@ type NavItem = {
 };
 
 const NAV: NavItem[] = [
-  { href: "/dashboard",   label: "Übersicht",  icon: LayoutDashboard,  group: "Start" },
-  { href: "/contacts",    label: "Kontakte",   icon: Users,            group: "CRM" },
-  { href: "/projects",    label: "Projekte",   icon: Briefcase,        group: "CRM" },
-  { href: "/tasks",       label: "Aufgaben",   icon: CheckSquare,      group: "CRM" },
-  { href: "/documents",   label: "Dokumente",  icon: FileText,         group: "Belege" },
-  { href: "/articles",    label: "Artikel",    icon: Package,          group: "Belege" },
-  { href: "/time",        label: "Zeit",       icon: Clock,            group: "Operativ" },
-  { href: "/schedule",    label: "Plantafel",  icon: CalendarDays,     group: "Operativ" },
-  { href: "/maintenance", label: "Wartung",    icon: Wrench,           group: "Module" },
-  { href: "/warehouse",   label: "Lager",      icon: Warehouse,        group: "Module" },
-  { href: "/funding",     label: "Förderung",  icon: FileSpreadsheet,  group: "Module" },
-  { href: "/reminders",   label: "Mahnwesen",  icon: AlertCircle,      group: "Module" },
-  { href: "/checklists",  label: "Checklisten", icon: ListChecks,      group: "Module" },
-  { href: "/flowai",      label: "FlowAI",     icon: Sparkles,         group: "Module" },
-  { href: "/settings",    label: "Einstellungen", icon: Settings,      group: "System" },
+  { href: "/dashboard",   label: "Übersicht",     icon: LayoutDashboard,  group: "Start" },
+  { href: "/contacts",    label: "Kontakte",      icon: Users,            group: "CRM" },
+  { href: "/projects",    label: "Projekte",      icon: Briefcase,        group: "CRM" },
+  { href: "/tasks",       label: "Aufgaben",      icon: CheckSquare,      group: "CRM" },
+  { href: "/documents",   label: "Dokumente",     icon: FileText,         group: "Belege" },
+  { href: "/articles",    label: "Artikel",       icon: Package,          group: "Belege" },
+  { href: "/time",        label: "Zeit",          icon: Clock,            group: "Operativ" },
+  { href: "/schedule",    label: "Plantafel",     icon: CalendarDays,     group: "Operativ" },
+  { href: "/maintenance", label: "Wartung",       icon: Wrench,           group: "Module" },
+  { href: "/warehouse",   label: "Lager",         icon: Warehouse,        group: "Module" },
+  { href: "/funding",     label: "Förderung",     icon: FileSpreadsheet,  group: "Module" },
+  { href: "/reminders",   label: "Mahnwesen",     icon: AlertCircle,      group: "Module" },
+  { href: "/checklists",  label: "Checklisten",   icon: ListChecks,       group: "Module" },
+  { href: "/flowai",      label: "FlowAI",        icon: Sparkles,         group: "Module" },
+  { href: "/settings",    label: "Einstellungen", icon: Settings,         group: "System" },
 ];
 
 export function Sidebar({
@@ -41,7 +41,6 @@ export function Sidebar({
 }) {
   const pathname = usePathname();
 
-  // Group items
   const groups: Record<string, NavItem[]> = {};
   for (const item of NAV) {
     const g = item.group ?? "";
@@ -50,17 +49,22 @@ export function Sidebar({
 
   return (
     <aside className="row-span-2 border-r border-border bg-card flex flex-col min-h-screen">
-      <div className="px-5 h-14 flex items-center gap-2.5 border-b border-border">
-        <div className="size-8 rounded-md bg-primary text-primary-fg grid place-items-center">
-          <Flame className="size-4.5" />
+      {/* Brand */}
+      <div className="px-4 h-14 flex items-center gap-2.5 border-b border-border">
+        <div className="size-8 rounded-lg bg-gradient-brand text-primary-fg grid place-items-center shadow-sm">
+          <Flame className="size-4" strokeWidth={2.5} />
         </div>
-        <span className="text-base font-semibold tracking-tight">HeatFlow</span>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-semibold tracking-tight leading-none">HeatFlow</div>
+          <div className="text-[10px] text-muted-fg mt-0.5 tracking-wider uppercase">v1.0 · Demo</div>
+        </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto py-4 px-2.5 space-y-5">
         {Object.entries(groups).map(([group, items]) => (
           <div key={group}>
-            <div className="px-2 text-xs font-medium text-muted-fg uppercase tracking-wider mb-1.5">
+            <div className="px-2.5 text-[10px] font-semibold text-muted-fg uppercase tracking-[0.08em] mb-1.5">
               {group}
             </div>
             <ul className="space-y-0.5">
@@ -73,13 +77,21 @@ export function Sidebar({
                     <Link
                       href={item.href}
                       className={cn(
-                        "flex items-center gap-3 px-2.5 py-2 rounded text-sm font-medium transition-colors",
+                        "group relative flex items-center gap-2.5 pl-2.5 pr-2 py-1.5 rounded-md text-sm font-medium transition-all",
                         active
                           ? "bg-primary/10 text-primary"
-                          : "text-fg hover:bg-muted",
+                          : "text-fg/85 hover:text-fg hover:bg-muted",
                       )}
                     >
-                      <Icon className="size-4 flex-shrink-0" />
+                      {active && (
+                        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-primary" />
+                      )}
+                      <Icon
+                        className={cn(
+                          "size-4 flex-shrink-0 transition-colors",
+                          active ? "text-primary" : "text-muted-fg group-hover:text-fg",
+                        )}
+                      />
                       <span className="truncate">{item.label}</span>
                     </Link>
                   </li>
@@ -90,16 +102,18 @@ export function Sidebar({
         ))}
       </nav>
 
-      <form action={signOut} className="border-t border-border p-3 flex items-center gap-3">
-        <Avatar name={user.name} size={36} />
+      {/* User / Sign out */}
+      <form action={signOut} className="border-t border-border p-3 flex items-center gap-2.5">
+        <Avatar name={user.name} size={34} />
         <div className="min-w-0 flex-1">
-          <div className="text-sm font-medium truncate">{user.name}</div>
-          <div className="text-xs text-muted-fg truncate capitalize">{user.role}</div>
+          <div className="text-xs font-semibold truncate leading-tight">{user.name}</div>
+          <div className="text-[11px] text-muted-fg truncate capitalize leading-tight mt-0.5">{user.role}</div>
         </div>
         <button
           type="submit"
           aria-label="Abmelden"
-          className="p-2 rounded hover:bg-muted text-muted-fg hover:text-fg transition-colors"
+          title="Abmelden"
+          className="p-2 rounded-md hover:bg-muted text-muted-fg hover:text-danger transition-colors"
         >
           <LogOut className="size-4" />
         </button>

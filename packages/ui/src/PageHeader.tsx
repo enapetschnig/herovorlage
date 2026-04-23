@@ -11,15 +11,15 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <div className={cn("border-b border-border bg-card", className)}>
-      <div className="px-6 py-5 flex items-start justify-between gap-4">
+    <div className={cn("border-b border-border bg-card/60 backdrop-blur-sm", className)}>
+      <div className="px-6 py-6 max-w-7xl mx-auto flex items-start justify-between gap-6">
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold tracking-tight truncate">{title}</h1>
-          {description && <p className="text-sm text-muted-fg mt-0.5">{description}</p>}
+          <h1 className="text-2xl font-semibold tracking-tight truncate">{title}</h1>
+          {description && <p className="text-sm text-muted-fg mt-1 leading-relaxed">{description}</p>}
         </div>
         {actions && <div className="flex items-center gap-2 flex-shrink-0">{actions}</div>}
       </div>
-      {children && <div className="px-6 pb-4">{children}</div>}
+      {children && <div className="px-6 pb-4 max-w-7xl mx-auto">{children}</div>}
     </div>
   );
 }

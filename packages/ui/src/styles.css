@@ -1,32 +1,48 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: hsl(0 0% 100%);
-  --color-fg: hsl(222 47% 11%);
-  --color-muted: hsl(220 14% 96%);
+  /* Warm, grounded palette — inspired by Linear/Vercel/Stripe with a WP-warmth accent */
+  --color-bg: hsl(40 25% 99%);
+  --color-fg: hsl(222 47% 9%);
+  --color-muted: hsl(35 20% 96%);
   --color-muted-fg: hsl(220 9% 46%);
-  --color-border: hsl(220 13% 91%);
-  --color-input: hsl(220 13% 91%);
-  --color-ring: hsl(217 91% 45%);
+  --color-border: hsl(220 15% 91%);
+  --color-input: hsl(220 15% 91%);
+  --color-ring: hsl(217 91% 50%);
 
-  --color-primary: hsl(217 91% 45%);
+  /* Deeper, richer primary — calm trust-blue */
+  --color-primary: hsl(217 91% 48%);
   --color-primary-fg: hsl(0 0% 100%);
-  --color-accent: hsl(33 100% 55%);
+
+  /* Accent: warm heat-pump orange/amber */
+  --color-accent: hsl(28 96% 54%);
   --color-accent-fg: hsl(20 14% 4%);
 
   --color-card: hsl(0 0% 100%);
-  --color-card-fg: hsl(222 47% 11%);
+  --color-card-fg: hsl(222 47% 9%);
 
-  --color-success: hsl(142 76% 36%);
+  --color-success: hsl(142 70% 36%);
+  --color-success-fg: hsl(0 0% 100%);
   --color-warning: hsl(38 92% 50%);
-  --color-danger:  hsl(0 84% 55%);
+  --color-warning-fg: hsl(20 14% 4%);
+  --color-danger:  hsl(0 76% 51%);
+  --color-danger-fg: hsl(0 0% 100%);
+  --color-info:    hsl(199 89% 48%);
 
-  --radius-sm: 4px;
-  --radius:    8px;
-  --radius-lg: 12px;
+  /* Subtly larger radii for modern feel */
+  --radius-sm: 6px;
+  --radius:    10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
 
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", "Fira Code", monospace;
+
+  /* Soft shadows that feel premium, not heavy */
+  --shadow-xs: 0 1px 2px 0 hsl(220 20% 10% / 0.04);
+  --shadow-sm: 0 2px 4px -1px hsl(220 20% 10% / 0.05), 0 1px 2px 0 hsl(220 20% 10% / 0.04);
+  --shadow-md: 0 8px 18px -4px hsl(220 20% 10% / 0.07), 0 4px 6px -2px hsl(220 20% 10% / 0.05);
+  --shadow-lg: 0 20px 40px -8px hsl(220 20% 10% / 0.10), 0 10px 20px -5px hsl(220 20% 10% / 0.06);
 }
 
 @layer base {
@@ -34,29 +50,62 @@
     color-scheme: light dark;
   }
   html.dark {
-    --color-bg: hsl(222 47% 7%);
+    --color-bg: hsl(222 47% 6%);
     --color-fg: hsl(210 40% 98%);
-    --color-muted: hsl(217 33% 14%);
+    --color-muted: hsl(217 33% 13%);
     --color-muted-fg: hsl(215 20% 65%);
-    --color-border: hsl(217 33% 18%);
-    --color-input: hsl(217 33% 18%);
-    --color-card: hsl(222 47% 9%);
+    --color-border: hsl(217 33% 17%);
+    --color-input: hsl(217 33% 17%);
+    --color-card: hsl(222 47% 8%);
     --color-card-fg: hsl(210 40% 98%);
+    --color-primary: hsl(217 91% 60%);
   }
 
   html, body {
     @apply bg-bg text-fg antialiased;
     font-family: var(--font-sans);
-    font-feature-settings: "cv11", "ss01", "ss03";
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+    letter-spacing: -0.005em;
   }
+
+  h1, h2, h3, h4, h5 {
+    letter-spacing: -0.02em;
+  }
+
+  /* Numbers always tabular in tables/finance */
+  .tabular-nums { font-variant-numeric: tabular-nums; }
 
   *:focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-bg;
+    @apply outline-none ring-2 ring-ring/50 ring-offset-2 ring-offset-bg;
   }
 
-  /* Scrollbars */
+  /* Slim, elegant scrollbars */
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 5px; }
+  ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 6px; border: 2px solid var(--color-bg); }
   ::-webkit-scrollbar-thumb:hover { background: var(--color-muted-fg); }
+
+  /* Selection color matches brand */
+  ::selection {
+    background: hsl(217 91% 48% / 0.18);
+    color: var(--color-fg);
+  }
+}
+
+/* Premium gradient utilities */
+@layer utilities {
+  .bg-gradient-brand {
+    background: linear-gradient(135deg,
+      hsl(217 91% 48%) 0%,
+      hsl(205 95% 50%) 50%,
+      hsl(195 95% 55%) 100%);
+  }
+  .bg-gradient-warm {
+    background: linear-gradient(135deg,
+      hsl(28 96% 54%) 0%,
+      hsl(14 92% 55%) 100%);
+  }
+  .bg-gradient-surface {
+    background: linear-gradient(180deg, hsl(40 25% 99%) 0%, hsl(35 20% 97%) 100%);
+  }
 }
