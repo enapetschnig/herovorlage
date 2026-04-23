@@ -1,28 +1,20 @@
-type Argon2Module = typeof import("@node-rs/argon2");
-let cached: Argon2Module | null = null;
+import { hash, verify, Algorithm } from "@node-rs/argon2";
 
-async function getArgon2(): Promise<Argon2Module> {
-  if (!cached) {
-    cached = await import(/* webpackIgnore: true */ "@node-rs/argon2");
-  }
-  return cached;
-}
+const argonOpts = {
+  algorithm: Algorithm.Argon2id,
+  memoryCost: 65536,
+  timeCost: 3,
+  parallelism: 4,
+} as const;
 
 export async function hashPassword(plain: string): Promise<string> {
-  const { hash, Algorithm } = await getArgon2();
-  return hash(plain, {
-    algorithm: Algorithm.Argon2id,
-    memoryCost: 65536,
-    timeCost: 3,
-    parallelism: 4,
-  });
+  return hash(plain, argonOpts);
 }
 
-export async function verifyPassword(hash: string | null | undefined, plain: string): Promise<boolean> {
-  if (!hash) return false;
+export async function verifyPassword(passwordHash: string | null | undefined, plain: string): Promise<boolean> {
+  if (!passwordHash) return false;
   try {
-    const argon = await getArgon2();
-    return await argon.verify(hash, plain);
+    return await verify(passwordHash, plain);
   } catch {
     return false;
   }
