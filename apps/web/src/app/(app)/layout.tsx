@@ -6,7 +6,32 @@ import { CommandPaletteHost } from "./_components/CommandPaletteHost";
 import { AssistantHost } from "./_components/AssistantHost";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth();
+  let session: Awaited<ReturnType<typeof auth>> | null = null;
+  let layoutError: { step: string; message: string; stack: string } | null = null;
+
+  try {
+    session = await auth();
+  } catch (e) {
+    layoutError = {
+      step: "auth()",
+      message: e instanceof Error ? e.message : String(e),
+      stack: e instanceof Error ? (e.stack ?? "no stack") : "",
+    };
+  }
+
+  if (layoutError) {
+    return (
+      <div className="p-6 max-w-3xl mx-auto">
+        <h1 className="text-2xl font-semibold mb-4 text-danger">LAYOUT-Fehler (raw)</h1>
+        <div className="rounded border border-danger/30 bg-danger/5 p-4 font-mono text-xs whitespace-pre-wrap break-all">
+          <div><strong>Step:</strong> {layoutError.step}</div>
+          <div><strong>Message:</strong> {layoutError.message}</div>
+          <pre className="mt-3 text-[10px] leading-tight">{layoutError.stack}</pre>
+        </div>
+      </div>
+    );
+  }
+
   if (!session?.user) redirect("/login");
 
   async function handleSignOut() {
